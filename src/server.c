@@ -142,7 +142,9 @@ void server_scan_event(int cooldown_ms){
 					new_packet->packet_buffer = event.packet->data;
 					new_packet->buffer_size = event.packet->dataLength;
 
-					ipacked_handle(new_packet);
+          client_data* cd = (client_data*)event.peer->data;
+
+					ipacked_handle(new_packet, cd->id);
 
 					free(new_packet);
 				}

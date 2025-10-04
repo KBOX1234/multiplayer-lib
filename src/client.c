@@ -28,7 +28,7 @@ int init_mpn_client(const char *ip_addr, int port){
 	sc_manager.remote_server = enet_host_connect(sc_manager.myself, &address, 2, 0);
 
 	if(sc_manager.remote_server == NULL) return BAD;
-
+  printf("(CLIENT): Connected\n");
 	return GOOD;
 }
 
@@ -56,7 +56,7 @@ void scan_for_incomming_packets(int cooldown_timer_ms){
 					packet_p->buffer_size = event.packet->dataLength;
 					packet_p->packet_buffer = event.packet->data;
 
-					ipacked_handle(packet_p);
+					ipacked_handle(packet_p, 0);
 
 					free(packet_p);
 				}

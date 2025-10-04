@@ -59,7 +59,7 @@ typedef enum{
 } sig_type_net;
 
 
-typedef void (*incomming_packet_handler)(s_packet* packet_p);
+typedef void (*incomming_packet_handler)(s_packet* packet_p, uint64_t client_id);
 
 extern incomming_packet_handler ipacked_handle;
 
