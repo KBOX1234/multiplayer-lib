@@ -38,6 +38,13 @@ typedef struct{
  
 } client_manager;
 
+//client connection to server
+typedef struct{
+	ENetHost* myself;
+
+	ENetPeer* remote_server;
+} server_connector;
+
 typedef enum{
     GOOD,
     BAD,
@@ -56,9 +63,13 @@ typedef void (*incomming_packet_handler)(s_packet* packet_p);
 
 extern incomming_packet_handler ipacked_handle;
 
-#ifdef SERVER
-
 extern client_manager client_master;
+
+extern server_connector sc_manager;
+
+/*
+ * Server Stuff
+ */
 
 //init
 int init_mpn_server(const char* ip_addr, int port, int client_max);
@@ -75,14 +86,28 @@ int simple_send_client(uint64_t id, s_packet* packet_p);
 //simple function to broadcast packet
 void simple_broadcast(s_packet* packet_p);
 
-//set incomming_packet_handler
-void set_incomming_packet_handler(incomming_packet_handler iph);
-
 //scan for incomming packets
 //cooldown_ml is the amount of time to wait in miliseconds
-void server_scan_event(int cooldown_ml);
+void server_scan_event(int cooldown_ms);
 
-#endif
+/*
+ *
+ *Client Stuff
+ *
+*/
+
+int init_mpn_client(const char* ip_addr, int port);
+
+int simple_send_to_server(s_packet* packet_p);
+
+//cooldown_timer_ml is the amount of miliseconds to wait for a response
+void scan_for_incomming_packets(int cooldown_timer_ms);
+
+/*
+ *Universal Stuff
+*/
+
+void set_incomming_packet_handler(incomming_packet_handler iph);
 
 s_packet serialize_packet(v_packet* packet_p);
 

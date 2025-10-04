@@ -115,10 +115,10 @@ void simple_broadcast(s_packet* packet_p){
     }  
 }
 
-void server_scan_event(int cooldown_ml){
+void server_scan_event(int cooldown_ms){
     ENetEvent event = {};
 
-    while(enet_host_service(client_master.server, &event, cooldown_ml) > 0){
+    while(enet_host_service(client_master.server, &event, cooldown_ms) > 0){
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:{
         
@@ -139,7 +139,7 @@ void server_scan_event(int cooldown_ml){
 					
 					s_packet* new_packet = malloc(sizeof(s_packet));
 
-					new_packet->packet_buffer = (char*)event.packet->data;
+					new_packet->packet_buffer = event.packet->data;
 					new_packet->buffer_size = event.packet->dataLength;
 
 					ipacked_handle(new_packet);
