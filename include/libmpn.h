@@ -8,19 +8,17 @@
 //this packet must be packed to be sent
 typedef struct{
     uint16_t type;
-
-    char* data;
-
-    size_t size;
-
+    uint16_t size;
+    unsigned char* data;
 } v_packet;
 
 
 //network ready packet
 typedef struct{
-    char* packet_buffer;
-
-    size_t buffer_size;
+    unsigned char* packet_buffer;
+    
+    //adds + 2 to account for meta data at the beginning
+    uint16_t buffer_size;
 } s_packet;
 
 typedef struct{
@@ -48,7 +46,19 @@ typedef enum{
     ALLOCATION_ERROR
 } STATUS;
 
+typedef enum{
+    TARGETED_P,
+    BROADCAST_P
+} sig_type_net;
+
+
+typedef void (*incomming_packet_handler)(s_packet* packet_p);
+
+
 extern client_manager client_master;
+
+
+extern incomming_packet_handler ipacked_handle;
 
 //init
 int init(const char* ip_addr, int port, int client_max);
@@ -63,6 +73,19 @@ int remove_client(uint64_t id);
 int simple_send_client(uint64_t id, s_packet* packet_p);
 
 //simple function to broadcast packet
-int simple_broadcast(s_packet* packet_p);
+void simple_broadcast(s_packet* packet_p);
 
-int server_scan_event();
+//set incomming_packet_handler
+void set_incomming_packet_handler(incomming_packet_handler iph);
+
+//scan for incomming packets
+//cooldown_ml is the amount of time to wait in miliseconds
+void server_scan_event(int cooldown_ml);
+
+s_packet serialize_packet(v_packet* packet_p);
+
+v_packet deserialize_packet(s_packet* packet_p);
+
+void destroy_serialized_packet(s_packet* packet_p);
+
+void destroy_deserialized_packet(v_packet* packet_p);

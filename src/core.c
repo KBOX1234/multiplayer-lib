@@ -5,6 +5,11 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
+
+client_manager client_master;
+incomming_packet_handler ipacked_handle = NULL;
+
 
 int init(const char* ip_addr, int port, int client_max){
     client_master.client_count = 0;
@@ -17,9 +22,10 @@ int init(const char* ip_addr, int port, int client_max){
 
     address.port = port;
 
+  
     client_master.server = enet_host_create(&address /* the address to bind the server host to */,
         client_max			/* allow up to 32 clients and/or outgoing connections */,
-	      1	/* allow up to 2 channels to be used, 0 and 1 */,
+	      2	/* 2 channels for targeted incom and brodcasting*/,
 	      0			/* assume any amount of incoming bandwidth */,
 	      0			/* assume any amount of outgoing bandwidth */);
     
@@ -68,8 +74,7 @@ int add_client(ENetEvent* event, uint64_t id){
 int remove_client(uint64_t id){
     int index = yoink_index_enet_peer_by_id(id);
     
-    if(index == BAD_INT) return CLIENT_NOT_FOUND;
-    
+    if(index == BAD_INT) return CLIENT_NOT_FOUND;  
 
     int latter_tmp_buff_size = (client_master.client_count - index) * sizeof(ENetPeer*);
 
@@ -79,19 +84,92 @@ int remove_client(uint64_t id){
 
     memcpy(&client_master.clients[index], latter_tmp_buff, latter_tmp_buff_size - 1);
 
+	client_master.client_count--;
+
     return GOOD;
 }
 
 
 int simple_send_client(uint64_t id, s_packet* packet_p){
+    ENetPacket *packet_e = enet_packet_create(packet_p->packet_buffer, packet_p->buffer_size, ENET_PACKET_FLAG_RELIABLE);
+
+    ENetPeer* client = yoink_enet_peer_by_id(id);
     
+    if(client == NULL) return CLIENT_NOT_FOUND;
+
+    enet_peer_send(client, TARGETED_P, packet_e);
+
+    return GOOD;
 }
 
 
-int simple_broadcast(s_packet* packet_p){
+void simple_broadcast(s_packet* packet_p){
+    ENetPacket* packet_e = enet_packet_create(packet_p->packet_buffer, packet_p->buffer_size, ENET_PACKET_FLAG_RELIABLE);
     
+    for(int i = 0; i < client_master.client_count; i++){
+        ENetPeer* sp = client_master.clients[i];
+
+        if(sp != NULL){
+            enet_peer_send(sp, BROADCAST_P, packet_e);
+        }
+    }  
 }
 
-int server_scan_event(){
+void server_scan_event(int cooldown_ml){
+    ENetEvent event = {};
 
+    while(enet_host_service(client_master.server, &event, cooldown_ml) > 0){
+        switch (event.type) {
+            case ENET_EVENT_TYPE_CONNECT:{
+        
+                srand(time(NULL));
+
+                uint64_t new_id = rand();
+
+				printf("(SERVER): New Client with id: %lu\n", new_id);
+
+                add_client(&event, new_id);
+				
+                break;
+            }
+
+			case ENET_EVENT_TYPE_RECEIVE:{
+				
+				if(ipacked_handle != NULL){
+					
+					s_packet* new_packet = malloc(sizeof(s_packet));
+
+					new_packet->packet_buffer = (char*)event.packet->data;
+					new_packet->buffer_size = event.packet->dataLength;
+
+					ipacked_handle(new_packet);
+
+					free(new_packet);
+				}
+
+				else{
+					printf("(SERVER): no packet handler set\n");
+				}
+
+				break;
+			}
+
+			case ENET_EVENT_TYPE_DISCONNECT:{
+				client_data* cd = (client_data*)event.peer->data;
+
+				uint64_t r_id = cd->id;
+
+				printf("(SERVER): Client with id %lu disconnected\n", r_id);
+
+				remove_client(r_id);
+
+				break;
+			}
+
+			case ENET_EVENT_TYPE_NONE:{
+				break;
+			}
+
+        }
+    }
 }

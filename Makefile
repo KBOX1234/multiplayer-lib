@@ -2,15 +2,15 @@
 CC = gcc
 CXX = g++
 AR = ar
-CFLAGS = -Wall -Iinclude
-CXXFLAGS = -Wall -Iinclude
+CFLAGS = -Wall -Iinclude -static -g
+CXXFLAGS = -Wall -Iinclude -static -g
 LDFLAGS = -lenet
 
 # Directories
 SRC_DIR = src
 EXAMPLES_DIR = examples
 BUILD_DIR = build
-LIB_NAME = libmylib.a
+LIB_NAME = libmpn.a
 
 # Find all source files
 C_SRCS = $(wildcard $(SRC_DIR)/*.c)
@@ -41,7 +41,7 @@ $(BUILD_DIR)/$(LIB_NAME): $(OBJS) | $(BUILD_DIR)
 
 # Compile C++ examples
 $(EXAMPLES_DIR)/%: $(EXAMPLES_DIR)/%.cpp $(BUILD_DIR)/$(LIB_NAME)
-	$(CXX) $(CXXFLAGS) $< -L$(BUILD_DIR) -lmylib $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $< -L$(BUILD_DIR) -lmpn $(LDFLAGS) -o $@
 
 # Clean
 .PHONY: clean
