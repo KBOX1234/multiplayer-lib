@@ -54,14 +54,14 @@ typedef enum{
 
 typedef void (*incomming_packet_handler)(s_packet* packet_p);
 
+extern incomming_packet_handler ipacked_handle;
+
+#ifdef SERVER
 
 extern client_manager client_master;
 
-
-extern incomming_packet_handler ipacked_handle;
-
 //init
-int init(const char* ip_addr, int port, int client_max);
+int init_mpn_server(const char* ip_addr, int port, int client_max);
 
 //adds a client
 int add_client(ENetEvent* event, uint64_t id);
@@ -81,6 +81,8 @@ void set_incomming_packet_handler(incomming_packet_handler iph);
 //scan for incomming packets
 //cooldown_ml is the amount of time to wait in miliseconds
 void server_scan_event(int cooldown_ml);
+
+#endif
 
 s_packet serialize_packet(v_packet* packet_p);
 

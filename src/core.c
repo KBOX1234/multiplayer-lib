@@ -11,7 +11,7 @@ client_manager client_master;
 incomming_packet_handler ipacked_handle = NULL;
 
 
-int init(const char* ip_addr, int port, int client_max){
+int init_mpn_server(const char* ip_addr, int port, int client_max){
     client_master.client_count = 0;
     client_master.clients = NULL;
 

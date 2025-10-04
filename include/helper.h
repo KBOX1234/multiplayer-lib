@@ -1,4 +1,7 @@
 #pragma once
+#include "libmpn.h"
+
+extern client_manager client_master;
 
 #include "libmpn.h"
 #include <stdint.h>

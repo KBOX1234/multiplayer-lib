@@ -1,4 +1,7 @@
 #include <stdio.h>
+
+#define SERVER
+
 #include "../include/libmpn.h"
 
 void custom_iph(s_packet* packet_p){
@@ -13,9 +16,8 @@ int main(int argc, char *argv[]){
      
     printf("Hello There...\n");
 
+	init_mpn_server("localhost", 8090, 32);
 	
-	init("localhost", 8090, 32);
-
 	set_incomming_packet_handler(custom_iph);
 
 	while(1){
