@@ -1,4 +1,4 @@
-# Simple Multiplayer Networking Librayr
+# Simple Multiplayer Networking Library
 
 libsmpn is a simple networking library designed on top of Enet.
 My goals with libsmpn is to make it easy to make multiplayer games in C/C++.
