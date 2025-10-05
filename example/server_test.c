@@ -5,7 +5,7 @@
 
 #define SERVER
 
-#include "../include/libsmpn.h"
+#include "libsmpn.h"
 
 void custom_iph(s_packet* packet_p, uint64_t client_id){
     v_packet new_packet = deserialize_packet(packet_p);

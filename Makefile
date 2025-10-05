@@ -10,11 +10,17 @@ LDFLAGS = -lenet
 SRC_DIR = src
 EXAMPLES_DIR = examples
 BUILD_DIR = build
+OBJ_DIR = $(BUILD_DIR)/obj
 LIB_NAME = libsmpn.a
+INCLUDE_DIR = include
+
+# Installation directories (can be overridden)
+PREFIX ?= /usr/local
+INCLUDE_INSTALL_DIR ?= $(PREFIX)/include
+LIB_INSTALL_DIR ?= $(PREFIX)/lib
 
 # Find all source files
 C_SRCS = $(wildcard $(SRC_DIR)/*.c)
-OBJ_DIR = $(BUILD_DIR)/obj
 OBJS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(C_SRCS))
 
 CPP_SRCS = $(wildcard $(EXAMPLES_DIR)/*.cpp)
@@ -48,4 +54,13 @@ $(EXAMPLES_DIR)/%: $(EXAMPLES_DIR)/%.cpp $(BUILD_DIR)/$(LIB_NAME)
 clean:
 	rm -rf $(BUILD_DIR)/*.a $(OBJ_DIR)/*.o $(EXAMPLES_DIR)/*
 
+# Install target
+.PHONY: install
+install: all
+	mkdir -p $(LIB_INSTALL_DIR)
+	mkdir -p $(INCLUDE_INSTALL_DIR)
+	cp $(BUILD_DIR)/$(LIB_NAME) $(LIB_INSTALL_DIR)/
+	cp -r $(INCLUDE_DIR)/* $(INCLUDE_INSTALL_DIR)/
 
+# Allow custom include/lib directories for compilation
+# Usage example: make CFLAGS="-Ipath\to\headers" LDFLAGS="-Lpath\to\libs -lmylib"

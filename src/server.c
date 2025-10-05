@@ -1,5 +1,5 @@
 #include "../include/libsmpn.h"
-#include "../include/helper.h"
+#include "../include/smpn_helper.h"
 #include <enet/enet.h>
 #include <stdlib.h>
 #include <unistd.h>
