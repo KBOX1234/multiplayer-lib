@@ -1,4 +1,4 @@
-#include "../include/libmpn.h"
+#include "../include/libsmpn.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -9,6 +9,8 @@ void handle_incomming(s_packet* packet_p, uint64_t client_id){
     if(new_packet.type == 2){
         printf("Got message: %s\n", new_packet.data);
     }
+
+    leave_server();
 }
 
 

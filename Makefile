@@ -10,7 +10,7 @@ LDFLAGS = -lenet
 SRC_DIR = src
 EXAMPLES_DIR = examples
 BUILD_DIR = build
-LIB_NAME = libmpn.a
+LIB_NAME = libsmpn.a
 
 # Find all source files
 C_SRCS = $(wildcard $(SRC_DIR)/*.c)

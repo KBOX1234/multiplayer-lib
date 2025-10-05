@@ -1,4 +1,4 @@
-#include "../include/libmpn.h"
+#include "../include/libsmpn.h"
 #include "../include/helper.h"
 #include <enet/enet.h>
 #include <stdlib.h>
@@ -125,33 +125,33 @@ void server_scan_event(int cooldown_ms){
                 srand(time(NULL));
 
                 uint64_t new_id = rand();
-
-				printf("(SERVER): New Client with id: %lu\n", new_id);
+                
+                printf("(SERVER): New Client with id: %lu\n", new_id);
 
                 add_client(&event, new_id);
-				
+
                 break;
             }
 
-			case ENET_EVENT_TYPE_RECEIVE:{
+			      case ENET_EVENT_TYPE_RECEIVE:{
 				
-				if(ipacked_handle != NULL){
+				        if(ipacked_handle != NULL){
 					
-					s_packet* new_packet = malloc(sizeof(s_packet));
+					          s_packet* new_packet = malloc(sizeof(s_packet));
 
-					new_packet->packet_buffer = event.packet->data;
-					new_packet->buffer_size = event.packet->dataLength;
+				            new_packet->packet_buffer = event.packet->data;
+					          new_packet->buffer_size = event.packet->dataLength;
 
-          client_data* cd = (client_data*)event.peer->data;
+                    client_data* cd = (client_data*)event.peer->data;
 
-					ipacked_handle(new_packet, cd->id);
+					          ipacked_handle(new_packet, cd->id);
 
-					free(new_packet);
-				}
+					          free(new_packet);
+				        }
 
-				else{
-					printf("(SERVER): no packet handler set\n");
-				}
+				        else{
+					          printf("(SERVER): no packet handler set\n");
+				        }
 
 				break;
 			}
@@ -173,5 +173,21 @@ void server_scan_event(int cooldown_ms){
 			}
 
         }
+    }
+}
+
+void kick_client(uint64_t client_id, bool gracefull){
+    ENetPeer* peer_p = yoink_enet_peer_by_id(client_id);
+
+    if(gracefull == true) enet_peer_disconnect(peer_p, 0);
+    else enet_peer_disconnect_now(peer_p, 0);
+}
+
+void kick_all_clients(bool gracefull){
+    for(int i = 0; i < client_master.client_count; i++){
+        ENetPeer* peer_p = client_master.clients[i];
+        if(gracefull == true) enet_peer_disconnect(peer_p, 0);
+        else enet_peer_disconnect_now(peer_p, 0);
+
     }
 }

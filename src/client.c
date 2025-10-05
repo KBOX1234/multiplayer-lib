@@ -1,4 +1,4 @@
-#include "../include/libmpn.h"
+#include "../include/libsmpn.h"
 #include <enet/enet.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,4 +76,8 @@ void scan_for_incomming_packets(int cooldown_timer_ms){
 			case ENET_EVENT_TYPE_NONE:{break;}
 		}
 	}
+}
+
+void leave_server(){
+    enet_peer_disconnect(sc_manager.remote_server, 0);
 }

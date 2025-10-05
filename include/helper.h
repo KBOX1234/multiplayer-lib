@@ -1,9 +1,8 @@
 #pragma once
-#include "libmpn.h"
+#include "libsmpn.h"
 
 extern client_manager client_master;
 
-#include "libmpn.h"
 #include <stdint.h>
 
 #define BAD_INT -1

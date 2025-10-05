@@ -1,4 +1,4 @@
-#include "../include/libmpn.h"
+#include "../include/libsmpn.h"
 #include <stdint.h>
 #include <string.h>
 

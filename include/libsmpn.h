@@ -1,7 +1,9 @@
 #pragma once
 
 
+
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "enet/enet.h"
 
@@ -90,6 +92,12 @@ void simple_broadcast(s_packet* packet_p);
 //cooldown_ml is the amount of time to wait in miliseconds
 void server_scan_event(int cooldown_ms);
 
+//kick a specific client
+void kick_client(uint64_t client_id, bool gracefull);
+
+//kick all clients
+void kick_all_clients(bool gracefull);
+
 /*
  *
  *Client Stuff
@@ -102,6 +110,8 @@ int simple_send_to_server(s_packet* packet_p);
 
 //cooldown_timer_ml is the amount of miliseconds to wait for a response
 void scan_for_incomming_packets(int cooldown_timer_ms);
+
+void leave_server();
 
 /*
  *Universal Stuff
