@@ -6,6 +6,7 @@ My goals with libsmpn is to make it easy to make multiplayer games in C/C++.
 ## Supported platforms
 - Linux
 - Windows
+  
 *You can theoretically run this library on any platform that supports ENet and GCC.*
 
 ## Compiling the library
