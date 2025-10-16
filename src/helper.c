@@ -1,4 +1,4 @@
-#include "../include/helper.h"
+#include "../include/smpn_helper.h"
 
 ENetPeer* yoink_enet_peer_by_id(uint64_t id){
     for(int i = 0; i < client_master.client_count; i++){
