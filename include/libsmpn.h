@@ -73,6 +73,11 @@ extern server_connector sc_manager;
  * Server Stuff
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 //init
 int init_mpn_server(const char* ip_addr, int port, int client_max);
 
@@ -126,3 +131,8 @@ v_packet deserialize_packet(s_packet* packet_p);
 void destroy_serialized_packet(s_packet* packet_p);
 
 void destroy_deserialized_packet(v_packet* packet_p);
+
+
+#ifdef __cplusplus
+}
+#endif
