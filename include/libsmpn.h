@@ -4,7 +4,10 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-
+#ifdef _WIN32
+#define VC_EXTRALEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include "enet/enet.h"
 
 //this packet must be packed to be sent
