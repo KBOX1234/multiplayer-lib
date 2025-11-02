@@ -4,10 +4,17 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+//trying to stop windows.h from poluting the namespace
 #ifdef _WIN32
-#define VC_EXTRALEAN
 #define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
+#define NOGDI             // Prevent inclusion of GDI (Graphics Device Interface), including Rectangle()
+#define NOSYSMETRICS
+//#define NOMINMAX 1
+#define NOUSER
+#define NOCOMM
+#define NOIME
+#define NOSERVICE
+#define NOMCX
 #endif
 #include "enet/enet.h"
 
