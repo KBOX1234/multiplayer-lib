@@ -1,6 +1,7 @@
 #include "../include/libsmpn.h"
 #include <stdint.h>
 #include <string.h>
+#include <stdlib.h>
 
 s_packet serialize_packet(v_packet *packet_p){
     s_packet new_packet;
@@ -49,4 +50,8 @@ void destroy_deserialized_packet(v_packet *packet_p){
 
 void set_incomming_packet_handler(incomming_packet_handler iph){
 	ipacked_handle = iph;
+}
+
+void set_status_sig_handler(incomming_status_sig_handler issh){
+    istatus_sig_handle = issh;
 }
