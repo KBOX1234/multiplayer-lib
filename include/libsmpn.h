@@ -1,22 +1,8 @@
 #pragma once
 
 
-
 #include <stdint.h>
 #include <stdbool.h>
-//trying to stop windows.h from poluting the namespace
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#define NOGDI             // Prevent inclusion of GDI (Graphics Device Interface), including Rectangle()
-#define NOSYSMETRICS
-//#define NOMINMAX 1
-#define NOUSER
-#define NOCOMM
-#define NOIME
-#define NOSERVICE
-#define NOMCX
-#endif
-#include "enet/enet.h"
 
 //this packet must be packed to be sent
 typedef struct{
@@ -39,24 +25,10 @@ typedef struct{
 }client_data;
 
 //client manager 
-typedef struct{
-    
-    size_t client_count;
-
-    ENetPeer** clients;
-
-    ENetHost *server;
-
-
- 
-} client_manager;
+typedef struct client_manager client_manager;
 
 //client connection to server
-typedef struct{
-	ENetHost* myself;
-
-	ENetPeer* remote_server;
-} server_connector;
+typedef struct server_connector server_connector;
 
 typedef enum{
     GOOD,
@@ -71,10 +43,19 @@ typedef enum{
     BROADCAST_P
 } sig_type_net;
 
+typedef enum{
+    CONNECT_SIG,
+    DISCONNECT_SIG
+} status_sigs;
+
 
 typedef void (*incomming_packet_handler)(s_packet* packet_p, uint64_t client_id);
 
+typedef void (*incomming_status_sig_handler)(int type, uint64_t client_id);
+
 extern incomming_packet_handler ipacked_handle;
+
+extern incomming_status_sig_handler istatus_sig_handle;
 
 extern client_manager client_master;
 
@@ -92,8 +73,8 @@ extern "C" {
 //init
 int init_mpn_server(const char* ip_addr, int port, int client_max);
 
-//adds a client
-int add_client(ENetEvent* event, uint64_t id);
+//adds a client (internal)
+int add_client(void* event, uint64_t id);
 
 //removes a client
 int remove_client(uint64_t id);
@@ -113,6 +94,12 @@ void kick_client(uint64_t client_id, bool gracefull);
 
 //kick all clients
 void kick_all_clients(bool gracefull);
+
+//gets a pointer to an array of client ids use get_client_count() - 1 to get the array size
+uint64_t* get_client_ids();
+
+//gets the amount of clients with the first client starting at 1
+int get_client_count();
 
 /*
  *
@@ -134,6 +121,8 @@ void leave_server();
 */
 
 void set_incomming_packet_handler(incomming_packet_handler iph);
+
+void set_status_sig_handler(incomming_status_sig_handler issh);
 
 s_packet serialize_packet(v_packet* packet_p);
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "libsmpn.h"
+#include <enet/enet.h>
 
 extern client_manager client_master;
 
