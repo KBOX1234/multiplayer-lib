@@ -3,6 +3,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+//client connection to server
+typedef struct server_connector{
+	ENetHost* myself;
+
+	ENetPeer* remote_server;
+} server_connector;
+
+
+
 server_connector sc_manager;
 
 int init_mpn_client(const char *ip_addr, int port){
@@ -67,7 +77,12 @@ void scan_for_incomming_packets(int cooldown_timer_ms){
                 break;
             }
 
+
             case ENET_EVENT_TYPE_DISCONNECT:{
+
+                if(istatus_sig_handle != NULL){
+                    istatus_sig_handle(DISCONNECT_SIG, 0);
+                }
                 printf("(CLIENT): Was disconnected from server\n");
 
                 break;

@@ -1,6 +1,8 @@
 #include "libsmpn.h"
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 
 void handle_incomming(s_packet* packet_p, uint64_t client_id){
@@ -13,11 +15,17 @@ void handle_incomming(s_packet* packet_p, uint64_t client_id){
     leave_server();
 }
 
+void handle_status(int type, uint64_t client_id){
+    printf("Got Signal DISCONNECT_SIG\n");
+    exit(0);
+}
+
 
 int main(){
 	init_mpn_client("localhost", 8090);
 
     set_incomming_packet_handler(handle_incomming);
+    set_status_sig_handler(handle_status);
     
     v_packet new_packet;
 

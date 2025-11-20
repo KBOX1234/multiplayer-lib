@@ -1,14 +1,29 @@
 #include "../include/libsmpn.h"
 #include "../include/smpn_helper.h"
 #include <enet/enet.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 
+//client manager 
+typedef struct client_manager{
+    
+    size_t client_count;
+
+    ENetPeer** clients;
+
+    ENetHost *server;
+
+
+ 
+} client_manager;
+
 client_manager client_master;
 incomming_packet_handler ipacked_handle = NULL;
+incomming_status_sig_handler istatus_sig_handle = NULL;
 
 
 int init_mpn_server(const char* ip_addr, int port, int client_max){
@@ -36,7 +51,9 @@ int init_mpn_server(const char* ip_addr, int port, int client_max){
     return GOOD;
 }
 
-int add_client(ENetEvent* event, uint64_t id){
+int add_client(void* event_v, uint64_t id){
+
+    ENetEvent* event = (ENetEvent*)event_v;
 
     if(event == NULL) return BAD;
 
@@ -130,6 +147,10 @@ void server_scan_event(int cooldown_ms){
 
                 add_client(&event, new_id);
 
+                if(istatus_sig_handle != NULL){
+                    istatus_sig_handle(CONNECT_SIG, new_id);
+                }
+
                 break;
             }
 
@@ -154,7 +175,6 @@ void server_scan_event(int cooldown_ms){
 
                 break;
             }
-
             case ENET_EVENT_TYPE_DISCONNECT:{
                 client_data* cd = (client_data*)event.peer->data;
 
@@ -164,9 +184,12 @@ void server_scan_event(int cooldown_ms){
 
                 remove_client(r_id);
 
+                if(istatus_sig_handle != NULL){
+                    istatus_sig_handle(DISCONNECT_SIG, r_id);
+                }
+
                 break;
             }
-
             case ENET_EVENT_TYPE_NONE:{
                 break;
             }
@@ -188,4 +211,19 @@ void kick_all_clients(bool gracefull){
         else enet_peer_disconnect_now(peer_p, 0);
 
     }
+}
+
+uint64_t* get_client_ids(){
+    uint64_t* ids = malloc(client_master.client_count * sizeof(uint64_t));
+
+    for(unsigned int i = 0; i < client_master.client_count; i++){
+        client_data* cd = (client_data*)client_master.clients[i]->data;
+        ids[i] = cd->id;
+    }
+
+    return ids;
+}
+
+int get_client_count(){
+    return (int)client_master.client_count;
 }
