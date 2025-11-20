@@ -16,18 +16,18 @@ int init_mpn_server(const char* ip_addr, int port, int client_max){
     client_master.clients = NULL;
 
     ENetAddress address = {};
-	  client_master.server = NULL;
+    client_master.server = NULL;
 
     address.host = ENET_HOST_ANY;
 
     address.port = port;
 
-  
+
     client_master.server = enet_host_create(&address /* the address to bind the server host to */,
         client_max			/* allow up to 32 clients and/or outgoing connections */,
-	      2	/* 2 channels for targeted incom and brodcasting*/,
-	      0			/* assume any amount of incoming bandwidth */,
-	      0			/* assume any amount of outgoing bandwidth */);
+        2	/* 2 channels for targeted incom and brodcasting*/,
+        0			/* assume any amount of incoming bandwidth */,
+        0			/* assume any amount of outgoing bandwidth */);
     
     if(client_master.server == NULL){
         return SERVER_NO_START;
@@ -84,7 +84,7 @@ int remove_client(uint64_t id){
 
     memcpy(&client_master.clients[index], latter_tmp_buff, latter_tmp_buff_size - 1);
 
-	client_master.client_count--;
+    client_master.client_count--;
 
     return GOOD;
 }
@@ -121,7 +121,7 @@ void server_scan_event(int cooldown_ms){
     while(enet_host_service(client_master.server, &event, cooldown_ms) > 0){
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:{
-        
+
                 srand(time(NULL));
 
                 uint64_t new_id = rand();
@@ -133,45 +133,43 @@ void server_scan_event(int cooldown_ms){
                 break;
             }
 
-			      case ENET_EVENT_TYPE_RECEIVE:{
-				
-				        if(ipacked_handle != NULL){
-					
-					          s_packet* new_packet = malloc(sizeof(s_packet));
+            case ENET_EVENT_TYPE_RECEIVE:{
 
-				            new_packet->packet_buffer = event.packet->data;
-					          new_packet->buffer_size = event.packet->dataLength;
+                if(ipacked_handle != NULL){
+                    s_packet* new_packet = malloc(sizeof(s_packet));
+
+                    new_packet->packet_buffer = event.packet->data;
+                    new_packet->buffer_size = event.packet->dataLength;
 
                     client_data* cd = (client_data*)event.peer->data;
 
-					          ipacked_handle(new_packet, cd->id);
+                    ipacked_handle(new_packet, cd->id);
 
-					          free(new_packet);
-				        }
+                    free(new_packet);
+                }
 
-				        else{
-					          printf("(SERVER): no packet handler set\n");
-				        }
+                else{
+                    printf("(SERVER): no packet handler set\n");
+                }
 
-				break;
-			}
+                break;
+            }
 
-			case ENET_EVENT_TYPE_DISCONNECT:{
-				client_data* cd = (client_data*)event.peer->data;
+            case ENET_EVENT_TYPE_DISCONNECT:{
+                client_data* cd = (client_data*)event.peer->data;
 
-				uint64_t r_id = cd->id;
+                uint64_t r_id = cd->id;
 
-				printf("(SERVER): Client with id %lu disconnected\n", r_id);
+                printf("(SERVER): Client with id %lu disconnected\n", r_id);
 
-				remove_client(r_id);
+                remove_client(r_id);
 
-				break;
-			}
+                break;
+            }
 
-			case ENET_EVENT_TYPE_NONE:{
-				break;
-			}
-
+            case ENET_EVENT_TYPE_NONE:{
+                break;
+            }
         }
     }
 }
