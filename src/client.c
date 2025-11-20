@@ -11,7 +11,7 @@ typedef struct server_connector{
 	ENetPeer* remote_server;
 } server_connector;
 
-
+bool connected = false;
 
 server_connector sc_manager;
 
@@ -38,7 +38,7 @@ int init_mpn_client(const char *ip_addr, int port){
     sc_manager.remote_server = enet_host_connect(sc_manager.myself, &address, 2, 0);
 
     if(sc_manager.remote_server == NULL) return BAD;
-    printf("(CLIENT): Connected\n");
+
     return GOOD;
 }
 
@@ -53,10 +53,18 @@ int simple_send_to_server(s_packet *packet_p){
 void scan_for_incomming_packets(int cooldown_timer_ms){
     ENetEvent event = {};
 
+wait_for_connection:
     while(enet_host_service(sc_manager.myself, &event, cooldown_timer_ms) > 0){
         switch(event.type){
 			
-            case ENET_EVENT_TYPE_CONNECT:{break;}
+            case ENET_EVENT_TYPE_CONNECT:{
+                connected = true;
+                printf("(CLIENT): Connected\n");
+                if(istatus_sig_handle != NULL){
+                    istatus_sig_handle(CONNECT_SIG, 0);
+                }
+                break;
+            }
 
             case ENET_EVENT_TYPE_RECEIVE:{
                 if(ipacked_handle != NULL){
@@ -91,6 +99,7 @@ void scan_for_incomming_packets(int cooldown_timer_ms){
             case ENET_EVENT_TYPE_NONE:{break;}
         }
     }
+    if(connected == false) goto wait_for_connection;
 }
 
 void leave_server(){
