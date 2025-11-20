@@ -30,6 +30,8 @@ typedef struct client_manager client_manager;
 //client connection to server
 typedef struct server_connector server_connector;
 
+#define CHANNEL_COUNT 2
+
 typedef enum{
     GOOD,
     BAD,

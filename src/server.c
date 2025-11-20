@@ -40,7 +40,7 @@ int init_mpn_server(const char* ip_addr, int port, int client_max){
 
     client_master.server = enet_host_create(&address /* the address to bind the server host to */,
         client_max			/* allow up to 32 clients and/or outgoing connections */,
-        2	/* 2 channels for targeted incom and brodcasting*/,
+        CHANNEL_COUNT	/* 2 channels for targeted incom and brodcasting*/,
         0			/* assume any amount of incoming bandwidth */,
         0			/* assume any amount of outgoing bandwidth */);
     

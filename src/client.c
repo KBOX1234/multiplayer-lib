@@ -11,7 +11,6 @@ typedef struct server_connector{
 	ENetPeer* remote_server;
 } server_connector;
 
-bool connected = false;
 
 server_connector sc_manager;
 
@@ -22,7 +21,7 @@ int init_mpn_client(const char *ip_addr, int port){
 	
     sc_manager.myself = enet_host_create(NULL /* create a client host */,
         1 /* only allow 1 outgoing connection */,
-        2 /* allow up 2 channels to be used, 0 and 1 */,
+        CHANNEL_COUNT /* allow up 2 channels to be used, 0 and 1 */,
         0 /* assume any amount of incoming bandwidth */,
         0 /* assume any amount of outgoing bandwidth */);
 
@@ -39,7 +38,18 @@ int init_mpn_client(const char *ip_addr, int port){
 
     if(sc_manager.remote_server == NULL) return BAD;
 
-    return GOOD;
+    ENetEvent event;
+    if (enet_host_service(sc_manager.myself, &event, 3000) > 0 &&
+        event.type == ENET_EVENT_TYPE_CONNECT)
+    {
+        if(istatus_sig_handle != NULL){
+            istatus_sig_handle(CONNECT_SIG, 0);
+        }
+        printf("(CLIENT): Connected\n");
+        return GOOD;
+    }
+
+    return BAD;
 }
 
 int simple_send_to_server(s_packet *packet_p){
@@ -53,13 +63,10 @@ int simple_send_to_server(s_packet *packet_p){
 void scan_for_incomming_packets(int cooldown_timer_ms){
     ENetEvent event = {};
 
-wait_for_connection:
     while(enet_host_service(sc_manager.myself, &event, cooldown_timer_ms) > 0){
         switch(event.type){
 			
             case ENET_EVENT_TYPE_CONNECT:{
-                connected = true;
-                printf("(CLIENT): Connected\n");
                 if(istatus_sig_handle != NULL){
                     istatus_sig_handle(CONNECT_SIG, 0);
                 }
@@ -99,7 +106,7 @@ wait_for_connection:
             case ENET_EVENT_TYPE_NONE:{break;}
         }
     }
-    if(connected == false) goto wait_for_connection;
+
 }
 
 void leave_server(){
