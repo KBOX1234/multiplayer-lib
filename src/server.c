@@ -25,6 +25,8 @@ client_manager client_master;
 incomming_packet_handler ipacked_handle = NULL;
 incomming_status_sig_handler istatus_sig_handle = NULL;
 
+bool be_silent = false;
+
 
 int init_mpn_server(const char* ip_addr, int port, int client_max){
     client_master.client_count = 0;
@@ -143,7 +145,7 @@ void server_scan_event(int cooldown_ms){
 
                 uint64_t new_id = rand();
                 
-                printf("(SERVER): New Client with id: %lu\n", new_id);
+                if (be_silent == false) printf("(SERVER): New Client with id: %llu\n", new_id);
 
                 add_client(&event, new_id);
 
@@ -170,7 +172,7 @@ void server_scan_event(int cooldown_ms){
                 }
 
                 else{
-                    printf("(SERVER): no packet handler set\n");
+                    if (be_silent == false) printf("(SERVER): no packet handler set\n");
                 }
 
                 break;
@@ -180,7 +182,7 @@ void server_scan_event(int cooldown_ms){
 
                 uint64_t r_id = cd->id;
 
-                printf("(SERVER): Client with id %lu disconnected\n", r_id);
+                if (be_silent == false) printf("(SERVER): Client with id %llu disconnected\n", r_id);
 
                 remove_client(r_id);
 

@@ -11,8 +11,9 @@ typedef struct server_connector{
 	ENetPeer* remote_server;
 } server_connector;
 
-
 server_connector sc_manager;
+
+bool be_silent = false;
 
 int init_mpn_client(const char *ip_addr, int port){
     sc_manager.myself = NULL;
@@ -45,7 +46,7 @@ int init_mpn_client(const char *ip_addr, int port){
         if(istatus_sig_handle != NULL){
             istatus_sig_handle(CONNECT_SIG, 0);
         }
-        printf("(CLIENT): Connected\n");
+        if (be_silent == false) printf("(CLIENT): Connected\n");
         return GOOD;
     }
 
@@ -86,7 +87,7 @@ void scan_for_incomming_packets(int cooldown_timer_ms){
                     free(packet_p);
                 }
                 else{
-                    printf("(CLIENT): No incomming packet handler has been set\n");
+                    if (be_silent == false) printf("(CLIENT): No incomming packet handler has been set\n");
                 }
 
                 break;
@@ -98,7 +99,7 @@ void scan_for_incomming_packets(int cooldown_timer_ms){
                 if(istatus_sig_handle != NULL){
                     istatus_sig_handle(DISCONNECT_SIG, 0);
                 }
-                printf("(CLIENT): Was disconnected from server\n");
+                if (be_silent == false) printf("(CLIENT): Was disconnected from server\n");
 
                 break;
             }

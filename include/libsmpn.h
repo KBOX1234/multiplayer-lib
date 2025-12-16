@@ -50,7 +50,6 @@ typedef enum{
     DISCONNECT_SIG
 } status_sigs;
 
-
 typedef void (*incomming_packet_handler)(s_packet* packet_p, uint64_t client_id);
 
 typedef void (*incomming_status_sig_handler)(int type, uint64_t client_id);
