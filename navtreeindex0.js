@@ -1,0 +1,19 @@
+var NAVTREEINDEX0 =
+{
+"annotated.html":[1,0],
+"classes.html":[1,1],
+"dir_d44c64559bbebec7f509842c48db8b23.html":[2,0,0],
+"files.html":[2,0],
+"index.html":[],
+"libsmpn_8h_source.html":[2,0,0,0],
+"md_README.html":[0],
+"md_README.html#autotoc_md1":[0,0],
+"md_README.html#autotoc_md2":[0,1],
+"md_README.html#autotoc_md3":[0,1,0],
+"md_README.html#autotoc_md4":[0,1,1],
+"pages.html":[],
+"smpn__helper_8h_source.html":[2,0,0,1],
+"structclient__data.html":[1,0,0],
+"structs__packet.html":[1,0,1],
+"structv__packet.html":[1,0,2]
+};
