@@ -1,0 +1,75 @@
+name: Build and Release SMPN Library
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+
+      - name: Read version
+        id: version
+        run: |
+          VERSION=$(cat VERSION)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build library
+        run: |
+          make clean
+          make all
+
+      - name: Package release files
+        run: |
+          mkdir release
+
+          cp build/libsmpn.a release/
+          cp -r include release/
+
+          tar -czf smpn-${VERSION}.tar.gz -C release .
+
+      - name: Create Git tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git tag v${VERSION}
+          git push origin v${VERSION}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: SMPN v${{ env.VERSION }}
+          files: |
+            smpn-${{ env.VERSION }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump version (patch increment)
+        run: |
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$(cat VERSION)"
+          PATCH=$((PATCH + 1))
+          echo "$MAJOR.$MINOR.$PATCH" > VERSION
+
+      - name: Commit version bump
+        run: |
+          git add VERSION
+          git commit -m "Bump version to $(cat VERSION)" || echo "No changes"
+          git push
