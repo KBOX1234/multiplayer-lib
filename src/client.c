@@ -1,3 +1,4 @@
+#define LIBSMPN_PRIVATE
 #include "../include/libsmpn.h"
 #include <enet/enet.h>
 #include <stdio.h>
@@ -5,11 +6,6 @@
 #include <unistd.h>
 
 //client connection to server
-typedef struct server_connector{
-	ENetHost* myself;
-
-	ENetPeer* remote_server;
-} server_connector;
 
 server_connector sc_manager;
 

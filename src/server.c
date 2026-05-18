@@ -1,3 +1,5 @@
+#define LIBSMPN_PRIVATE
+#include <inttypes.h>
 #include "../include/libsmpn.h"
 #include "../include/smpn_helper.h"
 #include <enet/enet.h>
@@ -9,17 +11,6 @@
 #include <time.h>
 
 //client manager 
-typedef struct client_manager{
-    
-    size_t client_count;
-
-    ENetPeer** clients;
-
-    ENetHost *server;
-
-
- 
-} client_manager;
 
 client_manager client_master;
 incomming_packet_handler ipacked_handle = NULL;
@@ -145,7 +136,7 @@ void server_scan_event(int cooldown_ms){
 
                 uint64_t new_id = rand();
                 
-                if (be_silent == false) printf("(SERVER): New Client with id: %llu\n", new_id);
+                if (be_silent == false) printf("(SERVER): New Client with id: %" PRIu64"\n", new_id);
 
                 add_client(&event, new_id);
 
@@ -182,7 +173,7 @@ void server_scan_event(int cooldown_ms){
 
                 uint64_t r_id = cd->id;
 
-                if (be_silent == false) printf("(SERVER): Client with id %llu disconnected\n", r_id);
+                if (be_silent == false) printf("(SERVER): Client with id %"PRIu64" disconnected\n", r_id);
 
                 remove_client(r_id);
 

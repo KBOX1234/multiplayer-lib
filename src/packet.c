@@ -1,3 +1,4 @@
+#define LIBSMPN_PRIVATE
 #include "../include/libsmpn.h"
 #include <stdint.h>
 #include <string.h>

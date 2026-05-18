@@ -169,7 +169,46 @@ void destroy_serialized_packet(s_packet* packet_p);
 //Frees the data inside a v_packet (!not recamonded!)
 void destroy_deserialized_packet(v_packet* packet_p);
 
+void silence_logging(bool is_silent);
+
 
 #ifdef __cplusplus
 }
 #endif
+
+//Other stuff yall don't need to worry about
+//
+#ifdef LIBSMPN_PRIVATE
+
+#include <enet/enet.h>
+
+typedef struct server_connector{
+	ENetHost* myself;
+
+	ENetPeer* remote_server;
+} server_connector;
+
+
+typedef struct client_manager{
+    
+    size_t client_count;
+
+    ENetPeer** clients;
+
+    ENetHost *server;
+
+
+ 
+} client_manager;
+
+extern server_connector sc_manager;
+
+extern bool be_silent;
+
+extern client_manager client_master;
+extern incomming_packet_handler ipacked_handle;
+extern incomming_status_sig_handler istatus_sig_handle;
+
+
+
+#endif // LIBSMPN_PRIVATE

@@ -1,16 +1,7 @@
+#define LIBSMPN_PRIVATE
+
 #include "../include/smpn_helper.h"
 
-typedef struct client_manager{
-    
-    size_t client_count;
-
-    ENetPeer** clients;
-
-    ENetHost *server;
-
-
- 
-} client_manager;
 
 ENetPeer* yoink_enet_peer_by_id(uint64_t id){
     for(int i = 0; i < client_master.client_count; i++){
@@ -32,3 +23,6 @@ int yoink_index_enet_peer_by_id(uint64_t id){
     return BAD;
 }
 
+void silence_logging(bool is_silent){
+    be_silent = is_silent;
+}
