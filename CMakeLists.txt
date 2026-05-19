@@ -79,7 +79,7 @@ endif()
 # -------------------------------------------------------------------
 
 file(GLOB SMPN_SOURCES
-    "${CMAKE_SOURCE_DIR}/src/*.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c"
 )
 
 # -------------------------------------------------------------------
@@ -90,7 +90,7 @@ add_library(smpn STATIC ${SMPN_SOURCES})
 
 target_include_directories(smpn
     PUBLIC
-        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${ENET_INCLUDE_DIRS}
 )
 
@@ -111,7 +111,7 @@ set_target_properties(smpn PROPERTIES
 if(BUILD_EXAMPLES)
 
     file(GLOB EXAMPLE_SOURCES
-        "${CMAKE_SOURCE_DIR}/examples/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/examples/*.cpp"
     )
 
     foreach(EXAMPLE_FILE ${EXAMPLE_SOURCES})
@@ -130,7 +130,7 @@ if(BUILD_EXAMPLES)
 
         target_include_directories(${EXAMPLE_NAME}
             PRIVATE
-                ${CMAKE_SOURCE_DIR}/include
+                ${CMAKE_CURRENT_SOURCE_DIR}/include
         )
 
         # Place executables in build/examples
