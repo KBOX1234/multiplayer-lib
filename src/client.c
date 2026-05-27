@@ -9,8 +9,6 @@
 
 server_connector sc_manager;
 
-bool be_silent = false;
-
 int init_mpn_client(const char *ip_addr, int port){
     sc_manager.myself = NULL;
     sc_manager.remote_server = NULL;
