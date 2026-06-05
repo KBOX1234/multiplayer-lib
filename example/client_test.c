@@ -1,7 +1,6 @@
 #include "libsmpn.h"
 #include <string.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
 
 
@@ -41,7 +40,7 @@ int main(){
 
 	while(1){
         
-        sleep(1);
+        //sleep(1);
 
         simple_send_to_server(&send_p);
 
